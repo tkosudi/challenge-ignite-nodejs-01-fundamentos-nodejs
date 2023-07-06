@@ -66,6 +66,20 @@ export class Database {
     }
   }
 
+  completedAt(table, id) {
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
+    
+    if (rowIndex > -1) {
+      const originalRow = this.#database[table][rowIndex];
+      const updatedRow = {...originalRow, completed_at: new Date().toISOString()};
+
+      console.log('updatedRow => ', updatedRow)
+  
+      // this.#database[table][rowIndex] = updatedRow;
+      // this.#persist()
+    }
+  }
+
   delete(table, id) {
     const rowIndex = this.#database[table].findIndex((row) => row.id === id)
 
