@@ -11,8 +11,6 @@ export const routes = [
     handler: ((req, res) => {
       const { search } = req.query
 
-      console.log(search)
-
       const tasks = database.select('tasks', search ? {
         title: search,
         description: search
@@ -26,6 +24,10 @@ export const routes = [
     handler: ((req, res) => {
       const {title, description} = req.body
 
+      if (!title || !description) {
+        return res.writeHead(400).end()
+      }
+
       const id = randomUUID()
 
       const task = {
@@ -37,6 +39,8 @@ export const routes = [
         updated_at: new Date().toISOString()
       }
 
+      console.log(task)
+
       database.insert('tasks', task)
 
       return res.writeHead(201).end()
@@ -46,7 +50,13 @@ export const routes = [
     method: 'PUT',
     path: buildRoutePath('/tasks/:id'),
     handler: ((req, res) => {
-      const {id} = req.params
+      const { id } = req.params
+
+      const task = database.selectById('tasks', id)
+
+      if (!task) {
+        return res.writeHead(404).end(JSON.stringify('Task not found'))
+      }
      
       const {title, description} = req.body
 
@@ -67,7 +77,13 @@ export const routes = [
     method: 'PATCH',
     path: buildRoutePath('/tasks/:id/complete'),
     handler: ((req, res) => {
-      const {id} = req.params
+      const { id } = req.params
+
+      const task = database.selectById('tasks', id)
+
+      if (!task) {
+        return res.writeHead(404).end(JSON.stringify('Task not found'))
+      }
 
       database.completedAt('tasks', id)
 
@@ -79,6 +95,12 @@ export const routes = [
     path: buildRoutePath('/tasks/:id'),
     handler: ((req, res) => {
       const {id} = req.params
+
+      const task = database.electById('tasks', id)
+
+      if (!task) {
+        return res.writeHead(404).end(JSON.stringify('Task not found'))
+      }
 
       database.delete('tasks', id)
 

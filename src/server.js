@@ -1,7 +1,9 @@
 import http from 'http'
+
 import { routes } from './routes.js'
 import { json } from './middlewares/json.js'
 import { extractQueryParams } from './utils/extract-query-params.js'
+import { run } from '../streams/import-csv.js'
 
 const server = http.createServer(async (req, res) => {
   const {method, url} = req
@@ -27,5 +29,6 @@ const server = http.createServer(async (req, res) => {
 })
 
 server.listen(3000, () => {
+  // run()
   console.log('Server is running on port 3000')
 })

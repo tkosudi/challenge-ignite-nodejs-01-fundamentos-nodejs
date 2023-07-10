@@ -25,14 +25,22 @@ export class Database {
       console.log(search)
       data = data.filter(row => {
         return Object.entries(search).some(([key, value]) => {
-          console.log('row[key] => ', row[key])
-          console.log('value => ', value)
           return row[key].toLowerCase().includes(value.toLowerCase())
         })
       })
     }
 
     return data
+  }
+
+  selectById(table, id) {
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
+    
+    if (rowIndex > -1) {
+      return this.#database[table][rowIndex]
+    }
+
+    return null
   }
 
   insert(table, data) {
@@ -71,12 +79,11 @@ export class Database {
     
     if (rowIndex > -1) {
       const originalRow = this.#database[table][rowIndex];
-      const updatedRow = {...originalRow, completed_at: new Date().toISOString()};
+      const updatedRow = {...originalRow, completed_at: originalRow.completed_at ? null : new Date().toISOString()};
 
-      console.log('updatedRow => ', updatedRow)
   
-      // this.#database[table][rowIndex] = updatedRow;
-      // this.#persist()
+      this.#database[table][rowIndex] = updatedRow;
+      this.#persist()
     }
   }
 
